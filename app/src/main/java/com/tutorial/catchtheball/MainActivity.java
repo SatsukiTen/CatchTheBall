@@ -52,30 +52,7 @@ public class MainActivity extends AppCompatActivity {
         black.setX(-80.0f);
         black.setY(-80.0f);
 
-        startLabel.setVisibility(View.INVISIBLE);
         boxY = 500.0f;
-
-        //schedule(TimerTask task, long delay, long period)
-        //task:実行する処理（タスク）
-        //delay:タスクを実行するまでに待機する時間（ミリ秒で指定）
-        //period:タスクの実行間隔（ミリ秒で指定）
-        //この設定だと、「待機時間なし、20ミリ秒毎にタスクを実行する」となる。
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run(){
-                //<Timer task
-                //メインスレッド外でUIを変更することはできない（Timer taskからはスコアラベルを更新できない）
-                //ので、handler.postでUIスレッドにrunnnableを渡してUIを更新する。
-                handler.post(new Runnable() {
-                    @Override
-                    public void run(){
-                        changePos();//画像の位置を変更＆スコアラベルを更新
-                    }
-                });
-                //Timer task>
-            }
-        }, 0,20);
-
     }
     public void changePos(){
         if (action_flg){
@@ -89,10 +66,28 @@ public class MainActivity extends AppCompatActivity {
     //code→overridemethodから検索可能
     @Override //上書き処理
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN){//画面をタップした場合の判定
-            action_flg = true;
-        }else if (event.getAction() == MotionEvent.ACTION_UP) {
-            action_flg = false;
+        if (start_flg){
+            if (event.getAction() == MotionEvent.ACTION_DOWN){
+                action_flg = true;
+            }else if (event.getAction() == MotionEvent.ACTION_UP){
+                action_flg = false;
+            }
+        }else{
+            start_flg = true;
+            //Invisibleは非表示にする。GONEは完全に消すという違い。
+            startLabel.setVisibility(View.GONE);
+
+            timer.schedule(new TimerTask(){
+                @Override
+                public void run(){
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            changePos();
+                        }
+                    });
+                }
+            }, 0, 20);
         }
         return true;
     }
