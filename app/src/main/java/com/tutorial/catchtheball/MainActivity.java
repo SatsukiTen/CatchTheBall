@@ -1,10 +1,14 @@
 package com.tutorial.catchtheball;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,9 +28,17 @@ public class MainActivity extends AppCompatActivity {
     //サイズ
     private int frameHeight;
     private int boxSize;
+    private int screenWidth;
+    private int screenHeight;
 
     //位置
     private float boxY;
+    private float orangeX;
+    private float orangeY;
+    private float pinkX;
+    private float pinkY;
+    private float blackX;
+    private float blackY;
 
     //Handler & Timer
     private Handler handler = new Handler();
@@ -50,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
         pink = findViewById(R.id.pink);
         black = findViewById(R.id.black);
 
+        //Screen Size
+        WindowManager wm = getWindowManager();
+        Display display = wm.getDefaultDisplay(); //アプリの外枠のサイズが取得可能
+        Point size = new Point();
+        display.getSize(size);
+
+        screenWidth = size.x;
+        screenHeight = size.y;
+
         orange.setX(-80.0f);
         orange.setY(-80.0f);
         pink.setX(-80.0f);
@@ -57,9 +78,39 @@ public class MainActivity extends AppCompatActivity {
         black.setX(-80.0f);
         black.setY(-80.0f);
 
-        boxY = 500.0f;
     }
     public void changePos(){
+
+        //Orange
+        orangeX -= 12; //速度
+        if(orangeX < 0){
+            orangeX = screenWidth + 20; //0以下の時に画面右に移動
+            orangeY = (float)Math.floor(Math.random() * (frameHeight - orange.getHeight()));//0<1の乱数生成
+        }
+
+        //更新
+        orange.setX(orangeX);
+        orange.setY(orangeY);
+
+        //Black
+        blackX -= 16;
+        if(blackX < 0){
+            blackX = screenWidth + 10;
+            blackY = (float)Math.floor(Math.random() * (frameHeight - black.getHeight()));
+        }
+        black.setX(blackX);
+        black.setY(blackY);
+
+        //Pink
+        pinkX -= 20;
+        if(pinkX < 0){
+            pinkX = screenWidth + 5000;
+            pinkY = (float)Math.floor(Math.random() * (frameHeight - pink.getHeight()));
+        }
+        pink.setX(pinkX);
+        pink.setY(pinkY);
+
+        //Box
         if (action_flg){
             boxY -= 20;
         }else {
