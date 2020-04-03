@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private float blackX;
     private float blackY;
 
+    //Score
+    private int score = 0;
+
     //Handler & Timer
     private Handler handler = new Handler();
     private Timer timer = new Timer();
@@ -78,8 +81,12 @@ public class MainActivity extends AppCompatActivity {
         black.setX(-80.0f);
         black.setY(-80.0f);
 
+        scoreLabel.setText("score : 0");
     }
     public void changePos(){
+
+        //前状態で衝突していたか否かを
+        hitCheck();
 
         //Orange
         orangeX -= 12; //速度
@@ -125,6 +132,53 @@ public class MainActivity extends AppCompatActivity {
         if(boxY > frameHeight - boxSize) boxY = frameHeight - boxSize;
 
         box.setY(boxY);
+
+        scoreLabel.setText("Score : " + score);
+
+    }
+
+    public void hitCheck(){
+        //Orange
+        float orangeCenterX = orangeX + orange.getWidth() / 2;
+        float orangeCenterY = orangeY + orange.getHeight() / 2;
+
+        //ボールの中心座標が青いボックスの中に入ったか否か
+        if (hitStatus(orangeCenterX, orangeCenterY)){
+
+            orangeX = -10.0f;
+            score += 10;
+        }
+
+        //Pink
+        float pinkCenterX = pinkX + pink.getWidth() / 2;
+        float pinkCenterY = pinkY + pink.getHeight() / 2;
+
+        if (hitStatus(orangeCenterX, orangeCenterY)){
+
+            pinkX = -10.0f;
+            score += 30;
+        }
+
+        //Black
+        float blackCenterX = blackX + black.getWidth() / 2;
+        float blackCenterY = blackY + black.getHeight() / 2;
+
+        if (hitStatus(blackCenterX, blackCenterY)){
+
+            //GameOver
+            if(timer != null){
+                //timerを停止する→timerで管理していたもの全て停止
+                timer.cancel();
+                timer = null;
+            }
+
+            //結果画面へ
+        }
+
+    }
+
+    public boolean hitStatus(float centerX, float centerY){
+        return (0 <= centerX && centerX <= boxSize && boxY <= centerY && centerY <= boxY + boxSize) ? true : false;
     }
 
     //code→overridemethodから検索可能
