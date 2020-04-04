@@ -41,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
     private float blackX;
     private float blackY;
 
+    //スピード
+    private int boxSpeed;
+    private int orangeSpeed;
+    private int pinkSpeed;
+    private int blackSpeed;
+
     //Score
     private int score = 0;
 
@@ -52,11 +58,16 @@ public class MainActivity extends AppCompatActivity {
     private boolean action_flg = false;
     private boolean start_flg = false;
 
+    //Sound
+    private SoundPlayer soundPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         //親クラスのonCreateを呼び出す。
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        soundPlayer = new SoundPlayer(this);
 
         //idからビューを見つけて変数に代入
         scoreLabel = findViewById(R.id.scoreLabel);
@@ -75,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
         screenWidth = size.x;
         screenHeight = size.y;
 
+        //画面サイズ基準で速度を定める
+        boxSpeed = Math.round(screenHeight / 60f);
+        orangeSpeed = Math.round(screenWidth / 60f);
+        pinkSpeed = Math.round(screenWidth / 36f);
+        blackSpeed = Math.round(screenWidth / 45f);
+
         orange.setX(-80.0f);
         orange.setY(-80.0f);
         pink.setX(-80.0f);
@@ -90,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         hitCheck();
 
         //Orange
-        orangeX -= 12; //速度
+        orangeX -= orangeSpeed; //速度
         if(orangeX < 0){
             orangeX = screenWidth + 20; //0以下の時に画面右に移動
             orangeY = (float)Math.floor(Math.random() * (frameHeight - orange.getHeight()));//0<1の乱数生成
@@ -101,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         orange.setY(orangeY);
 
         //Black
-        blackX -= 16;
+        blackX -= blackSpeed;
         if(blackX < 0){
             blackX = screenWidth + 10;
             blackY = (float)Math.floor(Math.random() * (frameHeight - black.getHeight()));
@@ -110,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         black.setY(blackY);
 
         //Pink
-        pinkX -= 20;
+        pinkX -= pinkSpeed;
         if(pinkX < 0){
             pinkX = screenWidth + 5000;
             pinkY = (float)Math.floor(Math.random() * (frameHeight - pink.getHeight()));
@@ -120,9 +137,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Box
         if (action_flg){
-            boxY -= 20;
+            boxY -= boxSpeed;
         }else {
-            boxY += 20;
+            boxY += boxSpeed;
         }
 
         if(boxY < 0) boxY = 0;
@@ -148,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
             orangeX = -10.0f;
             score += 10;
+            soundPlayer.playHitSound();
         }
 
         //Pink
@@ -158,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
             pinkX = -10.0f;
             score += 30;
+            soundPlayer.playHitSound();
         }
 
         //Black
@@ -165,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
         float blackCenterY = blackY + black.getHeight() / 2;
 
         if (hitStatus(blackCenterX, blackCenterY)){
+
+            soundPlayer.playOverSound();
 
             //GameOver
             if(timer != null){
