@@ -2,6 +2,7 @@ package com.tutorial.catchtheball;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -173,6 +174,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //結果画面へ
+            Intent intent = new Intent(getApplicationContext(), ResultActivity.class);//intentで指定したスクリーンを開始する。
+            intent.putExtra("SCORE", score);//putExtra("取り出すときに使うキー, 渡したい値)
+            startActivity(intent);
         }
 
     }
