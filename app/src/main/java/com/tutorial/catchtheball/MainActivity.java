@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         float pinkCenterX = pinkX + pink.getWidth() / 2;
         float pinkCenterY = pinkY + pink.getHeight() / 2;
 
-        if (hitStatus(orangeCenterX, orangeCenterY)){
+        if (hitStatus(pinkCenterX, pinkCenterY)){
 
             pinkX = -10.0f;
             score += 30;
@@ -179,6 +179,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        //backを押しても反応しないようにコメントアウト
     }
 
     public boolean hitStatus(float centerX, float centerY){
